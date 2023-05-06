@@ -1,52 +1,59 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const categories = {
-    "Social Media": ["facebook.com", "twitter.com"],
-    "News": ["cnn.com", "bbc.com"],
-    "Shopping": ["amazon.com", "ebay.com"],
-  };
+document.addEventListener('DOMContentLoaded', async function () {
+  async function categorizeTabs() {
+    const response = await fetch(chrome.runtime.getURL("categories.json"));
+    const categoriesData = await response.json();
 
-  // As of Manifest V3, the callback-based chrome.tabs.query is replaced with a Promise-based function
-  chrome.tabs.query({}).then((tabs) => {
-    const categorizedTabs = {};
+    const categories = categoriesData.reduce((obj, item) => {
+      obj[item.category] = item.domains;
+      return obj;
+    }, {});
 
-    for (const tab of tabs) {
-      for (const [category, domains] of Object.entries(categories)) {
-        for (const domain of domains) {
-          if (tab.url.includes(domain)) {
-            if (!categorizedTabs[category]) {
-              categorizedTabs[category] = [];
+    // As of Manifest V3, the callback-based chrome.tabs.query is replaced with a Promise-based function
+    chrome.tabs.query({}).then((tabs) => {
+      const categorizedTabs = {};
+
+      for (const tab of tabs) {
+        for (const [category, domains] of Object.entries(categories)) {
+          for (const domain of domains) {
+            if (tab.url.toLowerCase().includes(domain.toLowerCase())) {
+              if (!categorizedTabs[category]) {
+                categorizedTabs[category] = [];
+              }
+              categorizedTabs[category].push(tab);
+              break;
             }
-            categorizedTabs[category].push(tab);
           }
         }
       }
-    }
 
-    const categoriesDiv = document.getElementById('categories');
+      const categoriesDiv = document.getElementById('categories');
 
-    for (const [category, tabs] of Object.entries(categorizedTabs)) {
-      const categoryDiv = document.createElement('div');
-      categoryDiv.className = 'category';
+      for (const [category, tabs] of Object.entries(categorizedTabs)) {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
 
-      const categoryTitle = document.createElement('h2');
-      categoryTitle.textContent = category;
-      categoryDiv.appendChild(categoryTitle);
+        const categoryTitle = document.createElement('h2');
+        categoryTitle.textContent = category;
+        categoryDiv.appendChild(categoryTitle);
 
-      const tabsDiv = document.createElement('div');
-      tabsDiv.className = 'tabs';
-      categoryDiv.appendChild(tabsDiv);
+        const tabsDiv = document.createElement('div');
+        tabsDiv.className = 'tabs';
+        categoryDiv.appendChild(tabsDiv);
 
-      for (const tab of tabs) {
-        const tabDiv = document.createElement('div');
-        tabDiv.className = 'tab';
-        tabDiv.textContent = tab.title;
-        tabDiv.addEventListener('click', function () {
-          chrome.tabs.update(tab.id, { active: true });
-        });
-        tabsDiv.appendChild(tabDiv);
+        for (const tab of tabs) {
+          const tabDiv = document.createElement('div');
+          tabDiv.className = 'tab';
+          tabDiv.textContent = tab.title;
+          tabDiv.addEventListener('click', function () {
+            chrome.tabs.update(tab.id, { active: true });
+          });
+          tabsDiv.appendChild(tabDiv);
+        }
+
+        categoriesDiv.appendChild(categoryDiv);
       }
+    });
+  }
 
-      categoriesDiv.appendChild(categoryDiv);
-    }
-  });
+  await categorizeTabs();
 });

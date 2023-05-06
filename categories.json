@@ -1,0 +1,52 @@
+[
+  {
+    "category": "Social Media",
+    "domains": ["4chan.org", "About.me", "Academia.edu", "Advogato.org", "Aminoapps.com", "Angel.co", "Anobii.com", "Aseanup.com", "ASKfm.com", "A Small World", "Athlinks.com", "Badoo.com", "Bandcamp.com", "Basecamp.com", "Behance.net", "Bigtent.com", "BlackPlanet.com", "Blip.fm", "Blogster.com", "Bubbly.net", "Buddylist.co", "Buzznet.com", "CafeMom.com", "Care2.com", "Cellufun.com", "Classmates.com", "Cloob.com", "CloutHub", "Clubhouse.com", "Cohort.com", "CollegeHumor.com", "CommunityCentral.Chat", "CouchSurfing.com", "Crunchyroll.com", "Cyworld.com", "DailyBooth.com", "Delicious.com", "DeviantArt.com", "Diaspora.com", "Discord.com", "Disqus.com", "Doximity.com", "Dreamwidth.org", "Dribbble.com", "Dropbox.com", "Duolingo.com", "Elixio.net", "Ello.co", "Eons.com", "eToro.com", "Evernote.com", "EyeEm.com", "Facebook.com", "Fark.com", "FilmAffinity.com", "Flickr.com", "Flipboard.com", "Flixster.com", "Fotki.com", "Foursquare.com", "FriendFeed.com", "Friendica.com", "Friendster.com", "FullCircle.com", "GaiaOnline.com", "Gather.com", "Genius.com", "GetGlue.com", "Ghost.org", "Giphy.com", "GitHub.com", "Goodreads.com", "Gossip.com", "Greenpeace.org", "Habbo.com", "Hatena.com", "Hi5.com", "Hub Culture", "HubPages.com", "Hypebeast.com", "Hyves.nl", "Ibibo.com", "Identi.ca", "IMVU.com", "Influenster.com", "IRCcloud.com", "Italki.com", "Jappy.com", "Jawbone.com", "Jodel.com", "Jux.com", "KakaoTalk.com", "KASKUS.co.id", "Kickstarter.com", "Kiwibox.com", "Koo.app", "Kuaishou.com", "Last.fm", "Letterboxd.com", "LibraryThing.com", "Lifeknot.com", "LinkedIn.com", "Linktree.com", "Listography.com", "LiveJournal.com", "Lockerz.com", "Loftygoals.io", "Lotusphere.org", "Mappen.com", "Mastodon.social", "Mendeley.com", "MeWe.com", "Minds.com", "Mix.com", "MocoSpace.com", "Mubi.com", "Multiply.com", "MyHeritage.com", "MyLife.com", "MyOpera.com", "MySpace.com"]
+  },
+  {
+    "category": "News",
+    "domains": ["Axios.com", "BBC.com", "Bloomberg.com", "Breitbart.com", "BuzzFeed.com", "CBSNews.com", "CNN.com", "DrudgeReport.com", "FoxNews.com", "HuffPost.com", "InfoWars.com", "Mashable.com", "MSNBC.com", "NPR.org", "NBCNews.com", "NewYorker.com", "NYTimes.com", "Politico.com", "Reuters.com", "Slate.com", "TheAtlantic.com", "TheDailyBeast.com", "TheGuardian.com", "TheHill.com", "TheIntercept.com", "TheNation.com", "TheWashingtonPost.com", "Time.com", "USA Today", "Vice.com", "Vox.com", "WSJ.com", "Yahoo.com/news", "Zerohedge.com",
+    "bild.de", "derstandard.at", "diepresse.com", "faz.net", "handelsblatt.com", "n-tv.de", "spiegel.de", "sueddeutsche.de", "welt.de", "zeit.de",
+    "chosun.com", "donga.com", "joongang.co.kr","abcnyheter.se", "aftonbladet.se", "allehanda.se", "arbetarbladet.se", "bblat.se", "blt.se", "dagensmedia.se", "dagenssamhalle.se", "dagensnyheter.se", "dalademokraten.se", "ekuriren.se", "expressen.se", "fagersta-posten.se", "folkbladet.nu", "fria.nu", "ft.se", "gd.se", "gp.se", "helagotland.se", "helsingenorrbotten.se", "hd.se", "hufvudstadsbladet.fi", "kristianstadsbladet.se", "kuriren.nu", "kvp.se", "lokaltidningen.se", "lt.se", "mitti.se", "norrkopingsnyheter.se", "nsd.se", "nwt.se", "ostrasmaland.se", "p4.se", "pt.se", "radiohjalpen.se", "smp.se", "sn.se", "sr.se", "sr.se/p4", "st.nu", "svd.se", "svt.se", "sydsvenskan.se", "trelleborgsallehanda.se", "unt.se", "va.se", "vestmanlandsnytt.se", "vk.se", "vt.se", "ystadsallehanda.se"
+    ]
+  },
+  {
+    "category": "Shopping",
+    "domains": ["amazon.com", "ebay.com", "walmart.com", "target.com", "bestbuy.com", "homedepot.com", "lowes.com", "etsy.com"]
+  },
+  {
+    "category": "Travel",
+    "domains": ["booking.com", "expedia.com", "tripadvisor.com", "airbnb.com", "trivago.com", "kayak.com", "hotels.com", "skyscanner.com"]
+  },
+  {
+    "category": "Finance",
+    "domains": ["bankofamerica.com", "chase.com", "wellsfargo.com", "citi.com", "capitalone.com", "usbank.com", "pnc.com", "tdbank.com"]
+  },
+  {
+    "category": "Technology",
+    "domains": ["microsoft.com", "apple.com", "google.com", "samsung.com", "ibm.com", "oracle.com", "cisco.com", "intel.com"]
+  },
+  {
+    "category": "Entertainment",
+    "domains": ["netflix.com", "hulu.com", "disneyplus.com", "hbo.com", "primevideo.com", "youtube.com", "vimeo.com", "dailymotion.com"]
+  },
+  {
+    "category": "Sports",
+    "domains": ["espn.com", "nfl.com", "mlb.com", "nba.com", "nhl.com", "bleacherreport.com", "cbssports.com", "sports.yahoo.com"]
+  },
+  {
+    "category": "Gaming",
+    "domains": ["twitch.tv", "steampowered.com", "xbox.com", "playstation.com", "nintendo.com", "gamestop.com", "pcgamer.com", "ign.com"]
+  },
+  {
+    "category": "Health",
+    "domains": ["webmd.com", "mayoclinic.org", "healthline.com", "medlineplus.gov", "nih.gov", "clevelandclinic.org", "verywellhealth.com", "health.com"]
+  },
+  {
+    "category": "Food",
+    "domains": ["allrecipes.com", "foodnetwork.com", "tasty.co", "epicurious.com", "yummly.com", "delish.com", "bonappetit.com", "cookinglight.com"]
+  },
+  {
+    "category": "Education",
+    "domains": ["coursera.org", "edx.org", "khanacademy.org", "udemy.com", "udacity.com", "skillshare.com", "codecademy.com", "mit.edu"]
+  }]
