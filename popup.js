@@ -2,11 +2,13 @@ document.addEventListener('DOMContentLoaded', async function () {
   async function categorizeTabs() {
     const response = await fetch(chrome.runtime.getURL("categories.json"));
     const categoriesData = await response.json();
-
     const categories = categoriesData.reduce((obj, item) => {
       obj[item.category] = item.domains;
       return obj;
     }, {});
+
+    const userSettings = JSON.parse(localStorage.getItem("userSettings"));
+
 
     // As of Manifest V3, the callback-based chrome.tabs.query is replaced with a Promise-based function
     chrome.tabs.query({}).then((tabs) => {
