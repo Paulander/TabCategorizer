@@ -50,3 +50,38 @@ document.addEventListener("DOMContentLoaded", function () {
   // Load settings when the page loads
   loadSettings();
 });
+
+function populateCategoryDropdown() {
+  const categorySelect = document.getElementById("category-select");
+  categorySelect.innerHTML = "";
+
+  for (const category in settings.categories) {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  }
+}
+
+populateCategoryDropdown();
+
+document.getElementById("add-website-button").addEventListener("click", function () {
+  const categorySelect = document.getElementById("category-select");
+  const websiteInput = document.getElementById("website-input");
+
+  const selectedCategory = categorySelect.value;
+  const websiteURL = websiteInput.value.trim();
+
+  if (selectedCategory && websiteURL) {
+    if (!settings.categories[selectedCategory].includes(websiteURL)) {
+      settings.categories[selectedCategory].push(websiteURL);
+      localStorage.setItem("settings.categories", JSON.stringify(settings.categories));
+      websiteInput.value = "";
+      alert("Website added successfully!");
+    } else {
+      alert("This website is already in the selected category.");
+    }
+  } else {
+    alert("Please select a category and enter a website URL.");
+  }
+});
