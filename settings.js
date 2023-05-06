@@ -19,6 +19,19 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem("userSettings", JSON.stringify(settings));
   }
 
+
+const clearUserCategoriesButton = document.getElementById("clear-user-categories");
+
+clearUserCategoriesButton.addEventListener("click", function () {
+  if (confirm("Are you sure you want to clear all user categories?")) {
+    const settings = JSON.parse(localStorage.getItem("userSettings"));
+    settings.categories = {};
+    saveSettings(settings);
+    loadSettings();
+  }
+});
+
+
 // ...
 function displaySettings(settings) {
   // Populate categories list
