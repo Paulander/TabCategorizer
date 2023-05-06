@@ -1,0 +1,23 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.category-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.category-name {
+  font-weight: bold;
+}
+
+.websites-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.website-item {
+  padding: 5px 0;
+}

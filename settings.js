@@ -11,17 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
       categories: {},
       colorScheme: "default",
     };
-
-    // Populate categories list
-    categoriesList.innerHTML = "";
-    for (const [category, domains] of Object.entries(settings.categories)) {
-      const categoryItem = document.createElement("div");
-      categoryItem.textContent = category;
-      categoriesList.appendChild(categoryItem);
-    }
-
-    // Set selected color scheme
-    colorOptions.value = settings.colorScheme;
+    return settings;
   }
 
   // Save user settings
@@ -29,32 +19,37 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem("userSettings", JSON.stringify(settings));
   }
 
-  // Add new category
-  addCategoryButton.addEventListener("click", function () {
-    const newCategory = prompt("Enter the name of the new category:");
-    if (newCategory) {
-      const settings = JSON.parse(localStorage.getItem("userSettings"));
-      settings.categories[newCategory] = [];
-      saveSettings(settings);
-      loadSettings();
+// ...
+function displaySettings(settings) {
+  // Populate categories list
+  categoriesList.innerHTML = "";
+  for (const [category, domains] of Object.entries(settings.categories)) {
+    const categoryContainer = document.createElement("div");
+    categoryContainer.className = "category-container";
+
+    const categoryName = document.createElement("div");
+    categoryName.className = "category-name";
+    categoryName.textContent = category;
+    categoryContainer.appendChild(categoryName);
+
+    const domainsList = document.createElement("ul");
+    domainsList.className = "websites-list";
+    for (const domain of domains) {
+      const domainItem = document.createElement("li");
+      domainItem.className = "website-item";
+      domainItem.textContent = domain;
+      domainsList.appendChild(domainItem);
     }
-  });
+    categoryContainer.appendChild(domainsList);
+    categoriesList.appendChild(categoryContainer);
+  }
 
-  // Change color scheme
-  colorOptions.addEventListener("change", function () {
-    const settings = JSON.parse(localStorage.getItem("userSettings"));
-    settings.colorScheme = colorOptions.value;
-    saveSettings(settings);
-  });
+  // Set selected color scheme
+  colorOptions.value = settings.colorScheme;
 
-  // Load settings when the page loads
-  loadSettings();
-});
-
-function populateCategoryDropdown() {
+  // Populate category dropdown
   const categorySelect = document.getElementById("category-select");
   categorySelect.innerHTML = "";
-
   for (const category in settings.categories) {
     const option = document.createElement("option");
     option.value = category;
@@ -62,26 +57,52 @@ function populateCategoryDropdown() {
     categorySelect.appendChild(option);
   }
 }
+// ...
 
-populateCategoryDropdown();
-
-document.getElementById("add-website-button").addEventListener("click", function () {
-  const categorySelect = document.getElementById("category-select");
-  const websiteInput = document.getElementById("website-input");
-
-  const selectedCategory = categorySelect.value;
-  const websiteURL = websiteInput.value.trim();
-
-  if (selectedCategory && websiteURL) {
-    if (!settings.categories[selectedCategory].includes(websiteURL)) {
-      settings.categories[selectedCategory].push(websiteURL);
-      localStorage.setItem("settings.categories", JSON.stringify(settings.categories));
-      websiteInput.value = "";
-      alert("Website added successfully!");
-    } else {
-      alert("This website is already in the selected category.");
+  // Add new category
+  addCategoryButton.addEventListener("click", function () {
+    const newCategory = prompt("Enter the name of the new category:");
+    if (newCategory) {
+      const settings = loadSettings();
+      settings.categories[newCategory] = [];
+      saveSettings(settings);
+      displaySettings(settings);
     }
-  } else {
-    alert("Please select a category and enter a website URL.");
-  }
+  });
+
+  // Change color scheme
+  colorOptions.addEventListener("change", function () {
+    const settings = loadSettings();
+    settings.colorScheme = colorOptions.value;
+    saveSettings(settings);
+  });
+
+  // Add website to category
+  document.getElementById("add-website-button").addEventListener("click", function () {
+    const categorySelect = document.getElementById("category-select");
+    const websiteInput = document.getElementById("website-input");
+
+    const selectedCategory = categorySelect.value;
+    const websiteURL = websiteInput.value.trim();
+
+    if (selectedCategory && websiteURL) {
+      const settings = loadSettings();
+      if (!settings.categories[selectedCategory].includes(websiteURL)) {
+        settings.categories[selectedCategory].push(websiteURL);
+        saveSettings(settings);
+        displaySettings(settings);
+        websiteInput.value = "";
+        alert("Website added successfully!");
+      } else {
+        alert("This website is already in the selected category.");
+      }
+    } else {
+      alert("Please select a category and enter a website URL.");
+    }
+  });
+
+  // Load and display settings when the page loads
+  const settings = loadSettings();
+  displaySettings(settings);
 });
+
