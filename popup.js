@@ -127,7 +127,7 @@ function createCategoryElement(categoryName, tabs, defaultCollapseState) {
     }
   });
 
-  if (userSettings.defaultCollapseState) {
+  if (defaultCollapseState) {
     collapsibleButton.classList.remove('active');
     tabsElement.style.display = 'none';
     collapsibleButton.textContent = 'Show Tabs';
@@ -136,17 +136,6 @@ function createCategoryElement(categoryName, tabs, defaultCollapseState) {
     tabsElement.style.display = 'block';
     collapsibleButton.textContent = 'Hide Tabs';
   }
-
-  collapsibleButton.addEventListener('click', function () {
-    this.classList.toggle('active');
-    if (tabsElement.style.display === 'block') {
-      tabsElement.style.display = 'none';
-      collapsibleButton.textContent = 'Show Tabs';
-    } else {
-      tabsElement.style.display = 'block';
-      collapsibleButton.textContent = 'Hide Tabs';
-    }
-  });
 
   if (userSettings.defaultCollapseState) {
     collapsibleButton.classList.remove('active');
@@ -219,10 +208,10 @@ function loadUserCategories(categoriesElement, openTabs, defaultCollapseState) {
     formattedCategories[categoryName] = userSettings.categories[categoryName].map((domain) => domain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""));
   }
 
-  processCategories(defaultCategories, categoriesElement, openTabs, defaultCollapseState);
+  processCategories(formattedCategories, categoriesElement, openTabs, defaultCollapseState);
   applyAlternatingBackgroundColors(categoriesElement);
-
 }
+
 
 
 function applyAlternatingBackgroundColors(categoriesElement) {

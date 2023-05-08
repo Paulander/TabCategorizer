@@ -124,3 +124,4 @@ defaultCollapseStateCheckbox.addEventListener("change", function () {
       }
     }
   });
+});
