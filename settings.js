@@ -124,4 +124,14 @@ defaultCollapseStateCheckbox.addEventListener("change", function () {
       }
     }
   });
+  displaySettings(loadSettings());
 });
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.method === "displaySettings") {
+    displaySettings(loadSettings());
+  }
+});
+
+
+window.displaySettings = displaySettings;

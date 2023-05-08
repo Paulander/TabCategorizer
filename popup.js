@@ -43,6 +43,17 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+document.getElementById("settings-button").addEventListener("click", function () {
+  chrome.tabs.create({ url: "settings.html" }, function (tab) {
+    setTimeout(function () {
+      chrome.tabs.executeScript(tab.id, { file: "settings.js" }, function () {
+        chrome.tabs.sendMessage(tab.id, { method: "displaySettings" });
+      });
+    }, 100);
+  });
+});
+
+
 
 function processCategories(categories, categoriesElement, openTabs, defaultCollapseState) {
   for (const categoryName in categories) {
