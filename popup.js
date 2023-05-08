@@ -1,14 +1,50 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
   const categoriesElement = document.getElementById("categories");
+  const expandCollapseAllButton = document.getElementById("expandCollapseAll");
+
+  function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem("userSettings")) || {
+      categories: {},
+      colorScheme: "default",
+      defaultCollapseState: true,
+    };
+    return settings;
+  }
+
+  const settings = loadSettings();
 
   chrome.tabs.query({}, (tabs) => {
-    loadDefaultCategories(categoriesElement, tabs);
-    loadUserCategories(categoriesElement, tabs);
+    loadDefaultCategories(categoriesElement, tabs, settings.defaultCollapseState);
+    loadUserCategories(categoriesElement, tabs, settings.defaultCollapseState);
+  });
+
+  expandCollapseAllButton.addEventListener("click", function () {
+    const allCollapsibleButtons = document.querySelectorAll(".collapsible");
+    let shouldExpand = false;
+
+    allCollapsibleButtons.forEach((button) => {
+      if (!button.classList.contains("active")) {
+        shouldExpand = true;
+      }
+    });
+
+    allCollapsibleButtons.forEach((button) => {
+      const tabsElement = button.nextElementSibling;
+      if (shouldExpand) {
+        button.classList.add("active");
+        tabsElement.style.display = "block";
+        button.textContent = "Hide Tabs";
+      } else {
+        button.classList.remove("active");
+        tabsElement.style.display = "none";
+        button.textContent = "Show Tabs";
+      }
+    });
   });
 });
 
 
-function processCategories(categories, categoriesElement, openTabs) {
+function processCategories(categories, categoriesElement, openTabs, defaultCollapseState) {
   for (const categoryName in categories) {
     const tabsData = categories[categoryName];
 
@@ -31,7 +67,7 @@ function processCategories(categories, categoriesElement, openTabs) {
     });
 
     if (tabs.length > 0) {
-      const categoryElement = createCategoryElement(categoryName, tabs);
+      const categoryElement = createCategoryElement(categoryName, tabs, defaultCollapseState);
       categoriesElement.appendChild(categoryElement);
     }
   }
@@ -40,7 +76,7 @@ function processCategories(categories, categoriesElement, openTabs) {
 
 
 
-function createCategoryElement(categoryName, tabs) {
+function createCategoryElement(categoryName, tabs, defaultCollapseState) {
   const categoryElement = document.createElement('div');
   categoryElement.className = 'category';
 
@@ -57,6 +93,8 @@ function createCategoryElement(categoryName, tabs) {
   const tabsElement = document.createElement('div');
   tabsElement.className = 'tabs content';
 
+  const userSettings = JSON.parse(localStorage.getItem("userSettings")) || { categories: {}, defaultCollapseState: true };
+
   collapsibleButton.addEventListener('click', function () {
     this.classList.toggle('active');
     if (tabsElement.style.display === 'block') {
@@ -67,6 +105,58 @@ function createCategoryElement(categoryName, tabs) {
       collapsibleButton.textContent = 'Hide Tabs';
     }
   });
+
+  if (userSettings.defaultCollapseState) {
+    collapsibleButton.classList.remove('active');
+    tabsElement.style.display = 'none';
+    collapsibleButton.textContent = 'Show Tabs';
+  } else {
+    collapsibleButton.classList.add('active');
+    tabsElement.style.display = 'block';
+    collapsibleButton.textContent = 'Hide Tabs';
+  }
+
+  collapsibleButton.addEventListener('click', function () {
+    this.classList.toggle('active');
+    if (tabsElement.style.display === 'block') {
+      tabsElement.style.display = 'none';
+      collapsibleButton.textContent = 'Show Tabs';
+    } else {
+      tabsElement.style.display = 'block';
+      collapsibleButton.textContent = 'Hide Tabs';
+    }
+  });
+
+  if (userSettings.defaultCollapseState) {
+    collapsibleButton.classList.remove('active');
+    tabsElement.style.display = 'none';
+    collapsibleButton.textContent = 'Show Tabs';
+  } else {
+    collapsibleButton.classList.add('active');
+    tabsElement.style.display = 'block';
+    collapsibleButton.textContent = 'Hide Tabs';
+  }
+
+  collapsibleButton.addEventListener('click', function () {
+    this.classList.toggle('active');
+    if (tabsElement.style.display === 'block') {
+      tabsElement.style.display = 'none';
+      collapsibleButton.textContent = 'Show Tabs';
+    } else {
+      tabsElement.style.display = 'block';
+      collapsibleButton.textContent = 'Hide Tabs';
+    }
+  });
+
+  if (userSettings.defaultCollapseState) {
+    collapsibleButton.classList.remove('active');
+    tabsElement.style.display = 'none';
+    collapsibleButton.textContent = 'Show Tabs';
+  } else {
+    collapsibleButton.classList.add('active');
+    tabsElement.style.display = 'block';
+    collapsibleButton.textContent = 'Hide Tabs';
+  }
 
   if (Array.isArray(tabs)) {
     tabs.forEach((tab) => {
@@ -104,7 +194,7 @@ function createTabElement(tab) {
 
 
 
-function loadDefaultCategories(categoriesElement, openTabs) {
+function loadDefaultCategories(categoriesElement, openTabs, defaultCollapseState) {
   fetch("categories.json")
     .then((response) => response.json())
     .then((data) => {
@@ -112,12 +202,16 @@ function loadDefaultCategories(categoriesElement, openTabs) {
         acc[category.category] = category.domains.map((domain) => domain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""));
         return acc;
       }, {});
-      processCategories(defaultCategories, categoriesElement, openTabs);
+      processCategories(defaultCategories, categoriesElement, openTabs, defaultCollapseState);
       applyAlternatingBackgroundColors(categoriesElement);
     });
 }
 
-function loadUserCategories(categoriesElement, openTabs) {
+
+
+
+
+function loadUserCategories(categoriesElement, openTabs, defaultCollapseState) {
   const userSettings = JSON.parse(localStorage.getItem("userSettings")) || { categories: {} };
   const formattedCategories = {};
 
@@ -125,7 +219,7 @@ function loadUserCategories(categoriesElement, openTabs) {
     formattedCategories[categoryName] = userSettings.categories[categoryName].map((domain) => domain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""));
   }
 
-  processCategories(formattedCategories, categoriesElement, openTabs);
+  processCategories(defaultCategories, categoriesElement, openTabs, defaultCollapseState);
   applyAlternatingBackgroundColors(categoriesElement);
 
 }

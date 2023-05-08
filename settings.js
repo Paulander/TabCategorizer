@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const categoriesList = document.getElementById("categories-list");
   const addCategoryButton = document.getElementById("add-category");
   const colorOptions = document.getElementById("color-options");
+  const defaultCollapseStateCheckbox = document.getElementById("defaultCollapseState");
 
   // Load user settings
   function loadSettings() {
@@ -10,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const settings = JSON.parse(localStorage.getItem("userSettings")) || {
       categories: {},
       colorScheme: "default",
+      defaultCollapseState: true,
     };
     return settings;
   }
@@ -19,58 +21,69 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem("userSettings", JSON.stringify(settings));
   }
 
+  const clearUserCategoriesButton = document.getElementById("clear-user-categories");
 
-const clearUserCategoriesButton = document.getElementById("clear-user-categories");
+  clearUserCategoriesButton.addEventListener("click", function () {
+    if (confirm("Are you sure you want to clear all user categories?")) {
+      const settings = JSON.parse(localStorage.getItem("userSettings"));
+      settings.categories = {};
+      saveSettings(settings);
+      loadSettings();
+    }
+  });
 
-clearUserCategoriesButton.addEventListener("click", function () {
-  if (confirm("Are you sure you want to clear all user categories?")) {
-    const settings = JSON.parse(localStorage.getItem("userSettings"));
-    settings.categories = {};
-    saveSettings(settings);
-    loadSettings();
-  }
+// Update default collapse state
+defaultCollapseStateCheckbox.addEventListener("change", function () {
+  const settings = loadSettings();
+  settings.defaultCollapseState = defaultCollapseStateCheckbox.checked;
+  saveSettings(settings);
 });
 
 
-// ...
-function displaySettings(settings) {
-  // Populate categories list
-  categoriesList.innerHTML = "";
-  for (const [category, domains] of Object.entries(settings.categories)) {
-    const categoryContainer = document.createElement("div");
-    categoryContainer.className = "category-container";
 
-    const categoryName = document.createElement("div");
-    categoryName.className = "category-name";
-    categoryName.textContent = category;
-    categoryContainer.appendChild(categoryName);
 
-    const domainsList = document.createElement("ul");
-    domainsList.className = "websites-list";
-    for (const domain of domains) {
-      const domainItem = document.createElement("li");
-      domainItem.className = "website-item";
-      domainItem.textContent = domain;
-      domainsList.appendChild(domainItem);
+  function displaySettings(settings) {
+
+    defaultCollapseStateCheckbox.checked = settings.defaultCollapseState;
+    // Populate categories list
+    categoriesList.innerHTML = "";
+    for (const [category, domains] of Object.entries(settings.categories)) {
+      const categoryContainer = document.createElement("div");
+      categoryContainer.className = "category-container";
+
+      const categoryName = document.createElement("div");
+      categoryName.className = "category-name";
+      categoryName.textContent = category;
+      categoryContainer.appendChild(categoryName);
+
+      const domainsList = document.createElement("ul");
+      domainsList.className = "websites-list";
+      for (const domain of domains) {
+        const domainItem = document.createElement("li");
+        domainItem.className = "website-item";
+        domainItem.textContent = domain;
+        domainsList.appendChild(domainItem);
+      }
+      categoryContainer.appendChild(domainsList);
+      categoriesList.appendChild(categoryContainer);
     }
-    categoryContainer.appendChild(domainsList);
-    categoriesList.appendChild(categoryContainer);
-  }
 
-  // Set selected color scheme
-  colorOptions.value = settings.colorScheme;
+    // Set selected color scheme
+    colorOptions.value = settings.colorScheme;
 
-  // Populate category dropdown
-  const categorySelect = document.getElementById("category-select");
-  categorySelect.innerHTML = "";
-  for (const category in settings.categories) {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    categorySelect.appendChild(option);
+    // Set the default collapse state
+    defaultCollapseStateCheckbox.checked = settings.defaultCollapseState;
+
+    // Populate category dropdown
+    const categorySelect = document.getElementById("category-select");
+    categorySelect.innerHTML = "";
+    for (const category in settings.categories) {
+      const option = document.createElement("option");
+      option.value = category;
+      option.textContent = category;
+      categorySelect.appendChild(option);
+    }
   }
-}
-// ...
 
   // Add new category
   addCategoryButton.addEventListener("click", function () {
@@ -109,13 +122,5 @@ function displaySettings(settings) {
       } else {
         alert("This website is already in the selected category.");
       }
-    } else {
-      alert("Please select a category and enter a website URL.");
     }
   });
-
-  // Load and display settings when the page loads
-  const settings = loadSettings();
-  displaySettings(settings);
-});
-
