@@ -49,29 +49,28 @@ function createCategoryElement(categoryName, tabs) {
   categoryTitle.className = 'category-title';
   categoryElement.appendChild(categoryTitle);
 
+  const collapsibleButton = document.createElement('button');
+  collapsibleButton.textContent = 'Show Tabs';
+  collapsibleButton.className = 'collapsible';
+  categoryElement.appendChild(collapsibleButton);
+
   const tabsElement = document.createElement('div');
-  tabsElement.className = 'tabs';
+  tabsElement.className = 'tabs content';
+
+  collapsibleButton.addEventListener('click', function () {
+    this.classList.toggle('active');
+    if (tabsElement.style.display === 'block') {
+      tabsElement.style.display = 'none';
+      collapsibleButton.textContent = 'Show Tabs';
+    } else {
+      tabsElement.style.display = 'block';
+      collapsibleButton.textContent = 'Hide Tabs';
+    }
+  });
 
   if (Array.isArray(tabs)) {
     tabs.forEach((tab) => {
-      const tabElement = document.createElement("div");
-      tabElement.className = "tab";
-
-      const favicon = document.createElement('img');
-      favicon.src = `https://www.google.com/s2/favicons?domain=${new URL(tab.url).hostname}`;
-      favicon.width = 16;
-      favicon.height = 16;
-      tabElement.appendChild(favicon);
-
-      const tabTitle = document.createElement('span');
-      tabTitle.textContent = tab.name;
-      tabTitle.className = 'tab-title';
-      tabElement.appendChild(tabTitle);
-
-      tabElement.addEventListener("click", function () {
-        chrome.tabs.create({ url: tab.url });
-      });
-
+      const tabElement = createTabElement(tab);
       tabsElement.appendChild(tabElement);
     });
   }
@@ -80,6 +79,29 @@ function createCategoryElement(categoryName, tabs) {
 
   return categoryElement;
 }
+
+function createTabElement(tab) {
+  const tabElement = document.createElement("div");
+  tabElement.className = "tab";
+
+  const favicon = document.createElement('img');
+  favicon.src = `https://www.google.com/s2/favicons?domain=${new URL(tab.url).hostname}`;
+  favicon.width = 16;
+  favicon.height = 16;
+  tabElement.appendChild(favicon);
+
+  const tabTitle = document.createElement('span');
+  tabTitle.textContent = tab.name;
+  tabTitle.className = 'tab-title';
+  tabElement.appendChild(tabTitle);
+
+  tabElement.addEventListener("click", function () {
+    chrome.tabs.create({ url: tab.url });
+  });
+
+  return tabElement;
+}
+
 
 
 function loadDefaultCategories(categoriesElement, openTabs) {

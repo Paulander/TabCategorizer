@@ -66,3 +66,19 @@ h2 {
 .footer a:hover {
   text-decoration: underline;
 }
+
+.collapsible {
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.content {
+  display: none;
+  overflow: hidden;
+}
+
