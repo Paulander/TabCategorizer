@@ -3,13 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tab Organizer</title>
-  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="styles.css">
+  <title>Your Extension Name</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Tab Organizer</h1>
-    <div id="categories"></div>
+  <div id="popup">
+    <header>
+      <h1>Your Extension Name</h1>
+    </header>
+    <div id="search-container">
+      <input type="text" id="search" placeholder="Search tabs...">
+    </div>
+    <div id="categories">
+      <!-- Categories and tabs will be generated here -->
+    </div>
+    <div id="add-custom-category">
+      <input type="text" id="custom-category" placeholder="Add custom category">
+      <button id="add-category-btn">Add</button>
+    </div>
+    <footer>
+      <a href="https://yourwebsite.com" target="_blank">Website</a> |
+      <a href="https://yourwebsite.com/support" target="_blank">Support</a> |
+      <a href="https://yourwebsite.com/privacy" target="_blank">Privacy Policy</a>
+    </footer>
   </div>
   <script src="popup.js"></script>
 </body>

@@ -43,6 +43,7 @@ function createCategoryElement(categoryName, tabs) {
 
   const categoryTitle = document.createElement('h2');
   categoryTitle.textContent = categoryName;
+  categoryTitle.className = 'category-title';
   categoryElement.appendChild(categoryTitle);
 
   const tabsElement = document.createElement('div');
@@ -52,10 +53,22 @@ function createCategoryElement(categoryName, tabs) {
     tabs.forEach((tab) => {
       const tabElement = document.createElement("div");
       tabElement.className = "tab";
-      tabElement.textContent = tab.name;
+
+      const favicon = document.createElement('img');
+      favicon.src = `https://www.google.com/s2/favicons?domain=${new URL(tab.url).hostname}`;
+      favicon.width = 16;
+      favicon.height = 16;
+      tabElement.appendChild(favicon);
+
+      const tabTitle = document.createElement('span');
+      tabTitle.textContent = tab.name;
+      tabTitle.className = 'tab-title';
+      tabElement.appendChild(tabTitle);
+
       tabElement.addEventListener("click", function () {
         chrome.tabs.create({ url: tab.url });
       });
+
       tabsElement.appendChild(tabElement);
     });
   }
@@ -64,6 +77,7 @@ function createCategoryElement(categoryName, tabs) {
 
   return categoryElement;
 }
+
 
 function loadDefaultCategories(categoriesElement, openTabs) {
   fetch("categories.json")
