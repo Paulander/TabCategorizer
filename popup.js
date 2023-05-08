@@ -19,37 +19,26 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   expandCollapseAllButton.addEventListener("click", function () {
-    const allCollapsibleButtons = document.querySelectorAll(".collapsible");
+    const allCategoryTitles = document.querySelectorAll(".category-title");
     let shouldExpand = false;
 
-    allCollapsibleButtons.forEach((button) => {
-      if (!button.classList.contains("active")) {
+    allCategoryTitles.forEach((title) => {
+      if (title.textContent.includes("+")) {
         shouldExpand = true;
       }
     });
 
-    allCollapsibleButtons.forEach((button) => {
-      const tabsElement = button.nextElementSibling;
+    allCategoryTitles.forEach((title) => {
+      const tabsElement = title.nextElementSibling.nextElementSibling;
+      const categoryName = title.textContent.slice(0, -2);
       if (shouldExpand) {
-        button.classList.add("active");
+        title.textContent = categoryName + " -";
         tabsElement.style.display = "block";
-        button.textContent = "Hide Tabs";
       } else {
-        button.classList.remove("active");
+        title.textContent = categoryName + " +";
         tabsElement.style.display = "none";
-        button.textContent = "Show Tabs";
       }
     });
-  });
-});
-
-document.getElementById("settings-button").addEventListener("click", function () {
-  chrome.tabs.create({ url: "settings.html" }, function (tab) {
-    setTimeout(function () {
-      chrome.tabs.executeScript(tab.id, { file: "settings.js" }, function () {
-        chrome.tabs.sendMessage(tab.id, { method: "displaySettings" });
-      });
-    }, 100);
   });
 });
 
@@ -86,76 +75,62 @@ function processCategories(categories, categoriesElement, openTabs, defaultColla
 
 
 
-
 function createCategoryElement(categoryName, tabs, defaultCollapseState) {
   const categoryElement = document.createElement('div');
   categoryElement.className = 'category';
+
 
   const categoryTitle = document.createElement('h2');
   categoryTitle.textContent = categoryName;
   categoryTitle.className = 'category-title';
   categoryElement.appendChild(categoryTitle);
 
-  const collapsibleButton = document.createElement('button');
-  collapsibleButton.textContent = 'Show Tabs';
-  collapsibleButton.className = 'collapsible';
-  categoryElement.appendChild(collapsibleButton);
-
   const tabsElement = document.createElement('div');
   tabsElement.className = 'tabs content';
 
   const userSettings = JSON.parse(localStorage.getItem("userSettings")) || { categories: {}, defaultCollapseState: true };
 
-  collapsibleButton.addEventListener('click', function () {
-    this.classList.toggle('active');
-    if (tabsElement.style.display === 'block') {
-      tabsElement.style.display = 'none';
-      collapsibleButton.textContent = 'Show Tabs';
-    } else {
-      tabsElement.style.display = 'block';
-      collapsibleButton.textContent = 'Hide Tabs';
-    }
-  });
+
+    //Hover effect for categories to display +/- for expand/collapse.
+    categoryTitle.addEventListener('click', function () {
+      const isCollapsed = tabsElement.style.display === 'none';
+      if (isCollapsed) {
+        tabsElement.style.display = 'block';
+      } else {
+        tabsElement.style.display = 'none';
+      }
+    });
+
+    categoryTitle.addEventListener('mouseover', function () {
+      const isCollapsed = tabsElement.style.display === 'none';
+      if (isCollapsed) {
+        categoryTitle.textContent = categoryName + " +";
+      } else {
+        categoryTitle.textContent = categoryName + " -";
+      }
+    });
+
+    categoryTitle.addEventListener('mouseout', function () {
+      categoryTitle.textContent = categoryName;
+    });
+
 
   if (userSettings.defaultCollapseState) {
-    collapsibleButton.classList.remove('active');
     tabsElement.style.display = 'none';
-    collapsibleButton.textContent = 'Show Tabs';
   } else {
-    collapsibleButton.classList.add('active');
     tabsElement.style.display = 'block';
-    collapsibleButton.textContent = 'Hide Tabs';
   }
-
-  collapsibleButton.addEventListener('click', function () {
-    this.classList.toggle('active');
-    if (tabsElement.style.display === 'block') {
-      tabsElement.style.display = 'none';
-      collapsibleButton.textContent = 'Show Tabs';
-    } else {
-      tabsElement.style.display = 'block';
-      collapsibleButton.textContent = 'Hide Tabs';
-    }
-  });
 
   if (defaultCollapseState) {
-    collapsibleButton.classList.remove('active');
     tabsElement.style.display = 'none';
-    collapsibleButton.textContent = 'Show Tabs';
   } else {
-    collapsibleButton.classList.add('active');
     tabsElement.style.display = 'block';
-    collapsibleButton.textContent = 'Hide Tabs';
   }
 
   if (userSettings.defaultCollapseState) {
-    collapsibleButton.classList.remove('active');
     tabsElement.style.display = 'none';
-    collapsibleButton.textContent = 'Show Tabs';
   } else {
-    collapsibleButton.classList.add('active');
     tabsElement.style.display = 'block';
-    collapsibleButton.textContent = 'Hide Tabs';
   }
 
   if (Array.isArray(tabs)) {
