@@ -91,6 +91,7 @@ function loadDefaultCategories(categoriesElement, openTabs) {
         return acc;
       }, {});
       processCategories(defaultCategories, categoriesElement, openTabs);
+      applyAlternatingBackgroundColors(categoriesElement);
     });
 }
 
@@ -103,6 +104,18 @@ function loadUserCategories(categoriesElement, openTabs) {
   }
 
   processCategories(formattedCategories, categoriesElement, openTabs);
+  applyAlternatingBackgroundColors(categoriesElement);
+
 }
 
 
+function applyAlternatingBackgroundColors(categoriesElement) {
+  const categories = categoriesElement.querySelectorAll('.category');
+  categories.forEach((category, index) => {
+    if (index % 2 === 0) {
+      category.style.backgroundColor = '#f2f2f2';
+    } else {
+      category.style.backgroundColor = '#ffffff';
+    }
+  });
+}
