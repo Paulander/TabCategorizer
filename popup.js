@@ -12,14 +12,16 @@ function processCategories(categories, categoriesElement, openTabs) {
   for (const categoryName in categories) {
     const tabsData = categories[categoryName];
 
-    console.log(`Processing category: ${categoryName}`); // Debug line
-
     const tabs = openTabs.filter((tab) => {
       try {
-        const domain = new URL(tab.url).hostname.replace(/^www\./, '');
-        const isMatch = tabsData.some(tabDomain => domain === tabDomain || `www.${domain}` === tabDomain);
-        console.log(`Tab domain: ${domain}, isMatch: ${isMatch}`); // Debug line
-        return isMatch;
+        const domain = new URL(tab.url).hostname.toLowerCase();
+        return tabsData.some((tabDataDomain) => {
+          const lowerCaseTabDataDomain = tabDataDomain.toLowerCase();
+          return (
+            domain === lowerCaseTabDataDomain ||
+            domain.endsWith("." + lowerCaseTabDataDomain)
+          );
+        });
       } catch (error) {
         console.error(`Invalid URL: ${tab.url}`);
         return false;
@@ -34,6 +36,7 @@ function processCategories(categories, categoriesElement, openTabs) {
     }
   }
 }
+
 
 
 
