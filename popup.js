@@ -12,6 +12,54 @@ document.addEventListener("DOMContentLoaded", function () {
   expandCollapseAllButton.addEventListener("click", expandOrCollapseAll);
 });
 
+
+
+const tabPreviews = {};
+let tabsToCapture;
+
+chrome.tabs.query({}, (tabs) => {
+  tabsToCapture = tabs;
+  captureTab();
+});
+
+function captureTab() {
+  if (tabsToCapture.length === 0) {
+    return;
+  }
+    const tab = tabsToCapture.shift();
+
+  chrome.tabs.captureVisibleTab(tab.windowId, {format: "png"}, (dataUrl) => {
+    tabPreviews[tab.id] = dataUrl;
+    setTimeout(captureTab, 1000);
+  });
+}
+
+
+function showTabPreview(tabId) {
+  // Try to get the preview from the tabPreviews object
+  const preview = tabPreviews[tabId];
+
+  const previewElement = document.getElementById("preview-image");
+
+  if (preview) {
+    // If the preview exists, show it
+    previewElement.src = preview;
+    previewElement.parentElement.style.display = "block";
+  } else {
+    // If the preview doesn't exist, capture it
+    chrome.tabs.get(tabId, (tab) => {
+      chrome.tabs.captureVisibleTab(tab.windowId, {format: "png"}, (dataUrl) => {
+        tabPreviews[tabId] = dataUrl;
+        // Once the preview is captured, show it
+        previewElement.src = dataUrl;
+        previewElement.parentElement.style.display = "block";
+      });
+    });
+  }
+}
+
+
+
 function loadSettings() {
   const settings = JSON.parse(localStorage.getItem("userSettings")) || {
     categories: {},
@@ -61,7 +109,7 @@ function processCategories(categories, categoriesElement, openTabs, defaultColla
         return false;
       }
     }).map((tab) => {
-      return { url: tab.url, name: tab.title };
+      return { url: tab.url, name: tab.title, id: tab.id };
     });
 
     if (tabs.length > 0) {
@@ -127,9 +175,10 @@ function createCategoryElement(categoryName, tabs, defaultCollapseState) {
   }
 
   if (Array.isArray(tabs)) {
-    tabs.forEach((tab) => {
-      const tabElement = createTabElement(tab);
-      tabsElement.appendChild(tabElement);
+    tabs.forEach((tabData) => {
+
+    const tabElement = createTabElement(tabData, tabData.id);
+    tabsElement.appendChild(tabElement);
     });
   }
 
@@ -138,9 +187,13 @@ function createCategoryElement(categoryName, tabs, defaultCollapseState) {
   return categoryElement;
 }
 
-function createTabElement(tab) {
+function createTabElement(tab, tabId) {
+  console.log(tab); // This line will log the tab object to the console
+
   const tabElement = document.createElement("div");
   tabElement.className = "tab";
+  tabElement.classList.add("tab");
+
 
   const favicon = document.createElement('img');
   favicon.src = `https://www.google.com/s2/favicons?domain=${new URL(tab.url).hostname}`;
@@ -155,6 +208,11 @@ function createTabElement(tab) {
 
   tabElement.addEventListener("click", function () {
     chrome.tabs.create({ url: tab.url });
+  });
+
+   // Add event listener to show preview on hover
+  tabElement.addEventListener("mouseover", () => {
+    showTabPreview(tabId);
   });
 
   return tabElement;
@@ -174,7 +232,6 @@ function loadDefaultCategories(categoriesElement, openTabs, defaultCollapseState
       applyAlternatingBackgroundColors(categoriesElement);
     });
 }
-
 
 
 
