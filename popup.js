@@ -22,6 +22,8 @@ chrome.tabs.query({}, (tabs) => {
   captureTab();
 });
 
+
+
 function captureTab() {
   if (tabsToCapture.length === 0) {
     return;
@@ -45,7 +47,9 @@ function showTabPreview(tabId) {
     // If the preview exists, show it
     previewElement.src = preview;
     previewElement.parentElement.style.display = "block";
-  } else {
+  } 
+  //This floods the api calls and El Goog gets enraged.
+  /*else {
     // If the preview doesn't exist, capture it
     chrome.tabs.get(tabId, (tab) => {
       chrome.tabs.captureVisibleTab(tab.windowId, {format: "png"}, (dataUrl) => {
@@ -55,7 +59,7 @@ function showTabPreview(tabId) {
         previewElement.parentElement.style.display = "block";
       });
     });
-  }
+  }*/
 }
 
 
