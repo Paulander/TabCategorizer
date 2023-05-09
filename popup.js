@@ -192,8 +192,6 @@ function createCategoryElement(categoryName, tabs, defaultCollapseState) {
 }
 
 function createTabElement(tab, tabId) {
-  console.log(tab); // This line will log the tab object to the console
-
   const tabElement = document.createElement("div");
   tabElement.className = "tab";
   tabElement.classList.add("tab");
@@ -211,7 +209,7 @@ function createTabElement(tab, tabId) {
   tabElement.appendChild(tabTitle);
 
   tabElement.addEventListener("click", function () {
-    chrome.tabs.create({ url: tab.url });
+    chrome.tabs.update(tabId, { active: true });
   });
 
    // Add event listener to show preview on hover
