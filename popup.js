@@ -1,47 +1,40 @@
 document.addEventListener("DOMContentLoaded", function () {
   const categoriesElement = document.getElementById("categories");
   const expandCollapseAllButton = document.getElementById("expandCollapseAll");
-
-  function loadSettings() {
-    const settings = JSON.parse(localStorage.getItem("userSettings")) || {
-      categories: {},
-      colorScheme: "default",
-      defaultCollapseState: true,
-    };
-    return settings;
-  }
-
   const settings = loadSettings();
 
   chrome.tabs.query({}, (tabs) => {
-    loadDefaultCategories(categoriesElement, tabs, settings.defaultCollapseState);
-    loadUserCategories(categoriesElement, tabs, settings.defaultCollapseState);
+    loadCategories(categoriesElement, tabs, settings.defaultCollapseState);
   });
 
-  expandCollapseAllButton.addEventListener("click", function () {
-    const allCategoryTitles = document.querySelectorAll(".category-title");
-    let shouldExpand = false;
-
-    allCategoryTitles.forEach((title) => {
-      if (title.textContent.includes("+")) {
-        shouldExpand = true;
-      }
-    });
-
-    allCategoryTitles.forEach((title) => {
-      const tabsElement = title.nextElementSibling.nextElementSibling;
-      const categoryName = title.textContent.slice(0, -2);
-      if (shouldExpand) {
-        title.textContent = categoryName + " -";
-        tabsElement.style.display = "block";
-      } else {
-        title.textContent = categoryName + " +";
-        tabsElement.style.display = "none";
-      }
-    });
-  });
+  expandCollapseAllButton.addEventListener("click", expandOrCollapseAll);
 });
 
+function loadSettings() {
+  const settings = JSON.parse(localStorage.getItem("userSettings")) || {
+    categories: {},
+    colorScheme: "default",
+    defaultCollapseState: true,
+  };
+  return settings;
+}
+
+function loadCategories(categoriesElement, tabs, defaultCollapseState) {
+  loadDefaultCategories(categoriesElement, tabs, defaultCollapseState);
+  loadUserCategories(categoriesElement, tabs, defaultCollapseState);
+}
+
+function expandOrCollapseAll() {
+  const allCategoryTitles = Array.from(document.querySelectorAll(".category-title"));
+  const shouldExpand = allCategoryTitles.some(title => title.textContent.includes("+"));
+
+  allCategoryTitles.forEach((title) => {
+    const tabsElement = title.nextElementSibling.nextElementSibling;
+    const categoryName = title.textContent.slice(0, -2);
+    title.textContent = categoryName + (shouldExpand ? " -" : " +");
+    tabsElement.style.display = shouldExpand ? "block" : "none";
+  });
+}
 
 
 function processCategories(categories, categoriesElement, openTabs, defaultCollapseState) {
@@ -115,12 +108,7 @@ function createCategoryElement(categoryName, tabs, defaultCollapseState) {
     });
 
 
-  if (userSettings.defaultCollapseState) {
-    tabsElement.style.display = 'none';
-  } else {
-    tabsElement.style.display = 'block';
-  }
-
+ 
   if (defaultCollapseState) {
     tabsElement.style.display = 'none';
   } else {
