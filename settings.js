@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
   defaultCollapseStateCheckbox.addEventListener("change", updateDefaultCollapseState);
   document.getElementById("add-website-button").addEventListener("click", addWebsite);
   document.getElementById("clear-user-categories").addEventListener("click", clearUserCategories);
+
 });
+
 
 function loadSettings() {
   return JSON.parse(localStorage.getItem("userSettings")) || {
@@ -46,6 +48,7 @@ function updateDefaultCollapseState() {
   const settings = loadSettings();
   settings.defaultCollapseState = this.checked;
   saveSettings(settings);
+  chrome.runtime.sendMessage({ method: "updateDefaultCollapseState", data: settings.defaultCollapseState });
 }
 
 function addWebsite() {
@@ -79,48 +82,50 @@ function clearUserCategories() {
 }
 
 
-  function displaySettings(settings) {
+function displaySettings(settings) {
+  const defaultCollapseStateCheckbox = document.getElementById("defaultCollapseState");
+  const categoriesList = document.getElementById("categories-list");
+  const colorOptions = document.getElementById("color-options");
 
-    defaultCollapseStateCheckbox.checked = settings.defaultCollapseState;
-    // Populate categories list
-    categoriesList.innerHTML = "";
-    for (const [category, domains] of Object.entries(settings.categories)) {
-      const categoryContainer = document.createElement("div");
-      categoryContainer.className = "category-container";
+  defaultCollapseStateCheckbox.checked = settings.defaultCollapseState;
 
-      const categoryName = document.createElement("div");
-      categoryName.className = "category-name";
-      categoryName.textContent = category;
-      categoryContainer.appendChild(categoryName);
+  // Populate categories list
+  categoriesList.innerHTML = "";
+  for (const [category, domains] of Object.entries(settings.categories)) {
+    const categoryContainer = document.createElement("div");
+    categoryContainer.className = "category-container";
 
-      const domainsList = document.createElement("ul");
-      domainsList.className = "websites-list";
-      for (const domain of domains) {
-        const domainItem = document.createElement("li");
-        domainItem.className = "website-item";
-        domainItem.textContent = domain;
-        domainsList.appendChild(domainItem);
-      }
-      categoryContainer.appendChild(domainsList);
-      categoriesList.appendChild(categoryContainer);
+    const categoryName = document.createElement("div");
+    categoryName.className = "category-name";
+    categoryName.textContent = category;
+    categoryContainer.appendChild(categoryName);
+
+    const domainsList = document.createElement("ul");
+    domainsList.className = "websites-list";
+    for (const domain of domains) {
+      const domainItem = document.createElement("li");
+      domainItem.className = "website-item";
+      domainItem.textContent = domain;
+      domainsList.appendChild(domainItem);
     }
-
-    // Set selected color scheme
-    colorOptions.value = settings.colorScheme;
-
-    // Set the default collapse state
-    defaultCollapseStateCheckbox.checked = settings.defaultCollapseState;
-
-    // Populate category dropdown
-    const categorySelect = document.getElementById("category-select");
-    categorySelect.innerHTML = "";
-    for (const category in settings.categories) {
-      const option = document.createElement("option");
-      option.value = category;
-      option.textContent = category;
-      categorySelect.appendChild(option);
-    }
+    categoryContainer.appendChild(domainsList);
+    categoriesList.appendChild(categoryContainer);
   }
+
+  // Set selected color scheme
+  colorOptions.value = settings.colorScheme;
+
+  // Populate category dropdown
+  const categorySelect = document.getElementById("category-select");
+  categorySelect.innerHTML = "";
+  for (const category in settings.categories) {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  }
+}
+
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.method === "displaySettings") {

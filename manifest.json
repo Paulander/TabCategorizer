@@ -9,7 +9,13 @@
     "128": "icons/icon128.png"
   },
   "options_page": "settings.html",
-  "permissions": ["tabs"],
+  "permissions": [
+  "tabs",
+  "storage",
+  "activeTab",
+  "cookies"
+],
+
   "action": {
     "default_icon": {
       "16": "icons/icon16.png",

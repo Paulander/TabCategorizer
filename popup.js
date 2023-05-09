@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const categoriesElement = document.getElementById("categories");
   const expandCollapseAllButton = document.getElementById("expandCollapseAll");
+  let isExpanded = false;
+
   const settings = loadSettings();
 
   chrome.tabs.query({}, (tabs) => {
@@ -29,11 +31,14 @@ function expandOrCollapseAll() {
   const shouldExpand = allCategoryTitles.some(title => title.textContent.includes("+"));
 
   allCategoryTitles.forEach((title) => {
-    const tabsElement = title.nextElementSibling.nextElementSibling;
+    const tabsElement = title.nextElementSibling;
     const categoryName = title.textContent.slice(0, -2);
     title.textContent = categoryName + (shouldExpand ? " -" : " +");
     tabsElement.style.display = shouldExpand ? "block" : "none";
   });
+
+  // Update isExpanded flag based on the new state
+  isExpanded = shouldExpand;
 }
 
 
@@ -198,3 +203,10 @@ function applyAlternatingBackgroundColors(categoriesElement) {
     }
   });
 }
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.method === "updateDefaultCollapseState") {
+    isExpanded = !request.data;
+    expandOrCollapseAll();
+  }
+});
