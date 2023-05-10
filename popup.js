@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+// WIP: Functions related to app preview (thumbnail)
+
 const tabPreviews = {};
 let tabsToCapture;
 
@@ -23,7 +25,9 @@ chrome.tabs.query({}, (tabs) => {
 });
 
 
-
+//Function to get a screenshot of an active tab
+//TODOs: - We can't call the API too often so need a CD between calls
+//       - Can only screenshot the currently open tab. There are ugly workarounds for this  
 function captureTab() {
   if (tabsToCapture.length === 0) {
     return;
@@ -63,7 +67,7 @@ function showTabPreview(tabId) {
 }
 
 
-
+//Get the user settings from the options page. 
 function loadSettings() {
   const settings = JSON.parse(localStorage.getItem("userSettings")) || {
     categories: {},
@@ -73,11 +77,46 @@ function loadSettings() {
   return settings;
 }
 
+
+//Loads the categories into the popup. These are populated with currently active
+// tabs for quick access. There are predefined categories (filters) in a database
+// as well as user defined categories.
+
 function loadCategories(categoriesElement, tabs, defaultCollapseState) {
   loadDefaultCategories(categoriesElement, tabs, defaultCollapseState);
   loadUserCategories(categoriesElement, tabs, defaultCollapseState);
 }
 
+function loadDefaultCategories(categoriesElement, openTabs, defaultCollapseState) {
+  fetch("categories.json")
+    .then((response) => response.json())
+    .then((data) => {
+      const defaultCategories = data.reduce((acc, category) => {
+        acc[category.category] = category.domains.map((domain) => domain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""));
+        return acc;
+      }, {});
+      processCategories(defaultCategories, categoriesElement, openTabs, defaultCollapseState);
+      applyAlternatingBackgroundColors(categoriesElement);
+    });
+}
+
+
+function loadUserCategories(categoriesElement, openTabs, defaultCollapseState) {
+  const userSettings = JSON.parse(localStorage.getItem("userSettings")) || { categories: {} };
+  const formattedCategories = {};
+
+  for (const categoryName in userSettings.categories) {
+    formattedCategories[categoryName] = userSettings.categories[categoryName].map((domain) => domain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""));
+  }
+
+  processCategories(formattedCategories, categoriesElement, openTabs, defaultCollapseState);
+  applyAlternatingBackgroundColors(categoriesElement);
+}
+
+
+
+
+// Expands or collapses all categories, i.e. hides underlying tabs
 function expandOrCollapseAll() {
   const allCategoryTitles = Array.from(document.querySelectorAll(".category-title"));
   const shouldExpand = allCategoryTitles.some(title => title.textContent.includes("+"));
@@ -119,12 +158,25 @@ function processCategories(categories, categoriesElement, openTabs, defaultColla
     if (tabs.length > 0) {
       const categoryElement = createCategoryElement(categoryName, tabs, defaultCollapseState);
       categoriesElement.appendChild(categoryElement);
+
+      // in processCategories function, after the if (tabs.length > 0) check
+    if (tabs.length > 0) {
+      const categoryElement = createCategoryElement(categoryName, tabs, defaultCollapseState);
+      categoriesElement.appendChild(categoryElement);
+
+      // Add the category to the open categories in local storage
+      let openCategories = JSON.parse(localStorage.getItem('openCategories')) || [];
+      openCategories.push({name: categoryName, tabs: tabs});
+      localStorage.setItem('openCategories', JSON.stringify(openCategories));
+    }
+
     }
   }
 }
 
 
-
+// Creates the individual elements that represents each category in the 
+// popup
 function createCategoryElement(categoryName, tabs, defaultCollapseState) {
   const categoryElement = document.createElement('div');
   categoryElement.className = 'category';
@@ -191,6 +243,8 @@ function createCategoryElement(categoryName, tabs, defaultCollapseState) {
   return categoryElement;
 }
 
+
+//Creates each tab element that is listed under categories
 function createTabElement(tab, tabId) {
   const tabElement = document.createElement("div");
   tabElement.className = "tab";
@@ -221,36 +275,9 @@ function createTabElement(tab, tabId) {
 }
 
 
-
-function loadDefaultCategories(categoriesElement, openTabs, defaultCollapseState) {
-  fetch("categories.json")
-    .then((response) => response.json())
-    .then((data) => {
-      const defaultCategories = data.reduce((acc, category) => {
-        acc[category.category] = category.domains.map((domain) => domain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""));
-        return acc;
-      }, {});
-      processCategories(defaultCategories, categoriesElement, openTabs, defaultCollapseState);
-      applyAlternatingBackgroundColors(categoriesElement);
-    });
-}
-
-
-
-
-function loadUserCategories(categoriesElement, openTabs, defaultCollapseState) {
-  const userSettings = JSON.parse(localStorage.getItem("userSettings")) || { categories: {} };
-  const formattedCategories = {};
-
-  for (const categoryName in userSettings.categories) {
-    formattedCategories[categoryName] = userSettings.categories[categoryName].map((domain) => domain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""));
-  }
-
-  processCategories(formattedCategories, categoriesElement, openTabs, defaultCollapseState);
-  applyAlternatingBackgroundColors(categoriesElement);
-}
-
-
+// ======================================
+// Style/Visual functions
+// ======================================
 
 function applyAlternatingBackgroundColors(categoriesElement) {
   const categories = categoriesElement.querySelectorAll('.category');
